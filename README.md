@@ -12,12 +12,8 @@ BlackJack
 В случае победы игрок забирает все деньги
 Если победителей несколько, то они делят между собой выигрыш
 
-ER диаграмма
 ![ER диаграмма](https://github.com/bag-huyag/BlackJack/blob/main/ER.png)
-Реляционная модель
 ![Реляционная модель](https://github.com/bag-huyag/BlackJack/blob/main/RM.png)
-
-Атрибутивная модель
 ![Атрибутивная модель](https://github.com/bag-huyag/BlackJack/blob/main/AM.png)
 
 
