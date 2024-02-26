@@ -13,9 +13,9 @@ BlackJack
 Если победителей несколько, то они делят между собой выигрыш
 
 ER диаграмма
-![ER диаграмма]([https://github.com/bag-huyag/BlackJack/raw/master/image/image.png](https://github.com/bag-huyag/BlackJack/blob/main/ER.png))
+![ER диаграмма](https://github.com/bag-huyag/BlackJack/blob/main/ER.png)
 Реляционная модель
-![Реляционная модель]([[https://github.com/bag-huyag/BlackJack/raw/master/image/image.png](https://github.com/bag-huyag/BlackJack/blob/main/ER.png](https://github.com/bag-huyag/BlackJack/blob/main/RM.png)))
+![Реляционная модель](https://github.com/bag-huyag/BlackJack/blob/main/RM.png)
 
 Атрибутивная модель
 ![Атрибутивная модель](https://github.com/bag-huyag/BlackJack/blob/main/AM.png)
