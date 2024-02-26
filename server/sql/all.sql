@@ -1,0 +1,59 @@
+-- Active: 1707734547291@@127.0.0.1@3306@blackjack
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    username VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    balance INT DEFAULT 0,
+    sessionToken VARCHAR(255) DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS games (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20) NOT NULL,
+    bet INT NOT NULL,
+    turnTime INT NOT NULL,
+    creatorId INT DEFAULT NULL,
+    playersCount INT NOT NULL DEFAULT 1,
+    state VARCHAR(20) NOT NULL DEFAULT 'WAITING',
+    previousTurns VARCHAR(50) DEFAULT '',
+    currentTurnId INT DEFAULT NULL,
+    winnerId INT DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS cards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(10) NOT NULL,
+    value VARCHAR(5) NOT NULL,
+    suit VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS players (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    gameId INT NOT NULL,
+    userId INT NOT NULL,
+    balance INT NOT NUlL,
+    name VARCHAR(50) NOT NULL,
+    ready BOOLEAN NOT NULL DEFAULT TRUE,
+    state VARCHAR(20) NOT NULL DEFAULT 'IDLE',
+    outcome VARCHAR(20) NOT NULL DEFAULT 'JOINED',
+    score INT NOT NULL DEFAULT 0,
+    stay BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (gameId) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS gamePlayerCards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cardId INT NOT NULL,
+    playerId INT NOT NULL,
+    gameCode VARCHAR(20) NOT NULL,
+    FOREIGN KEY (cardId) REFERENCES cards(id),
+    FOREIGN KEY (playerId) REFERENCES players(id)
+);
+
+DROP TABLE gameplayercards;
+DROP TABLE players;
+DROP TABLE cards;
+DROP TABLE games;
+DROP TABLE users;

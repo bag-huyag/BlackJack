@@ -1,0 +1,32 @@
+body,
+html {
+	height: 100%;
+	margin: 0;
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f4;
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.text-l {
+	font-size: 3rem;
+	margin-bottom: 30px;
+}
+
+/* Adaptive styling */
+@media (max-width: 600px) {
+	text-l {
+		font-size: 1rem; /* Smaller font size on small screens */
+	}
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}

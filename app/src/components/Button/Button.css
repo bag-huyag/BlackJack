@@ -1,0 +1,35 @@
+button {
+	display: block;
+	margin: 10px auto;
+	padding: 10px 20px;
+	background-color: #007bff;
+	border: none;
+	border-radius: 5px;
+	color: white;
+	font-size: 18px;
+	cursor: pointer;
+	width: 22rem;
+}
+
+button:hover {
+	background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #d9d9d9;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+	button {
+		width: 18rem;
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 576px) {
+	button {
+		width: 16rem;
+		font-size: 16px;
+	}
+}

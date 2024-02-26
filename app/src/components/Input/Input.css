@@ -1,0 +1,23 @@
+.input {
+	padding: 10px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #f4f7fc;
+    width: 95%;
+}
+
+.input-password {
+	position: relative;
+	display: flex;
+    flex-direction: column;
+	flex-wrap: nowrap;
+    /* align-items: center; */
+}
+
+.eye-svg {
+	position: absolute;
+	align-self: flex-end;
+	top: 8px;
+	right: 10px;
+}
