@@ -18,7 +18,7 @@ ER диаграмма
 ![Реляционная модель]([[https://github.com/bag-huyag/BlackJack/raw/master/image/image.png](https://github.com/bag-huyag/BlackJack/blob/main/ER.png](https://github.com/bag-huyag/BlackJack/blob/main/RM.png)))
 
 Атрибутивная модель
-![Атрибутивная модель](https://github.com/bag-huyag/BlackJack/raw/master/AM.png)
+![Атрибутивная модель](https://github.com/bag-huyag/BlackJack/blob/main/AM.png)
 
 
 
