@@ -19,7 +19,7 @@ async function verifyToken(req, res, next) {
       pname: "getUserByToken",
       p1: token,
     },
-    timeout: 30000,
+    timeout: 60000,
   });
 
   if (

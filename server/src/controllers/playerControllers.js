@@ -49,7 +49,7 @@ async function getPlayer(req, res, next) {
 
   const player = {
     id: response.data.RESULTS[0].id[0],
-    bet: response.data.RESULTS[0].bet[0],
+    bet: response.data.RESULTS[0].balance[0],
     gameId: response.data.RESULTS[0].gameId[0],
     userId: response.data.RESULTS[0].userId[0],
     name: response.data.RESULTS[0].name[0],
@@ -214,6 +214,35 @@ async function updatePlayerStay(req, res, next) {
 
   res.send({
     message: "Player stay updated successfully",
+  });
+}
+
+async function updatePlayerScore(req, res, next) {
+  let { playerId, score } = req.body || req.query;
+  if (!playerId || score === undefined) {
+    return res.status(400).send({
+      message: "playerId and score required in the body or query!",
+    });
+  }
+
+  var response = await axios.get(`http://sql.lavro.ru/call.php`, {
+    params: {
+      db: config.dbName,
+      pname: "updatePlayerScore",
+      p1: playerId,
+      p2: score,
+    },
+    timeout: 30000,
+  });
+
+  if (response.data.ERROR) {
+    return res.status(404).send({
+      message: response.data.ERROR,
+    });
+  }
+
+  res.send({
+    message: "Player score updated successfully",
   });
 }
 

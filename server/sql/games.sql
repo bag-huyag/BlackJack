@@ -1,4 +1,4 @@
--- Active: 1706868882476@@127.0.0.1@3306@blackjack
+-- Active: 1707734547291@@127.0.0.1@3306
 DROP PROCEDURE IF EXISTS getGameByGameCode;
 CREATE PROCEDURE getGameByGameCode(IN p_gameCode VARCHAR(20))
 COMMENT 'Retrieve details of a game using its unique game code, 
@@ -205,6 +205,7 @@ BEGIN
     DECLARE v_previousTurns VARCHAR(50);
     DECLARE v_currentTurnId INT;
     DECLARE v_winnerId INT;
+    DECLARE v_bet INT;
 
     -- Check if the game exists
     SELECT COUNT(*) INTO v_gameExists FROM games WHERE code = p_gameCode;
@@ -213,7 +214,7 @@ BEGIN
     END IF;
 
     -- Get the game id
-    SELECT id, playersCount, previousTurns, currentTurnId, winnerId INTO v_gameId, v_playersCount, v_previousTurns, v_currentTurnId, v_winnerId FROM games WHERE code = p_gameCode;
+    SELECT id, playersCount, previousTurns, currentTurnId, winnerId, bet INTO v_gameId, v_playersCount, v_previousTurns, v_currentTurnId, v_winnerId, v_bet FROM games WHERE code = p_gameCode;
 
     -- Check if the player exists
     SELECT COUNT(*) INTO v_playerExists FROM players WHERE gameId = v_gameId AND id = p_winnerId;
@@ -222,10 +223,18 @@ BEGIN
     END IF;
 
     -- Update the player info
-    UPDATE players SET outcome = 'WINNER' WHERE id = p_winnerId;
+    UPDATE players 
+        SET outcome = 'WINNER', balance = balance + (v_bet * v_playersCount) 
+    WHERE id = p_winnerId;
+
+    -- Decrease the balance of other players
+    UPDATE players 
+        SET balance = balance - v_bet 
+    WHERE gameId = v_gameId AND id != p_winnerId;
 
     -- Update the game info
     UPDATE games SET winnerId = p_winnerId WHERE code = p_gameCode;
+
 
     SELECT 'Game winner updated successfully' AS message;
 END;
@@ -276,7 +285,7 @@ BEGIN
         g.currentTurnId AS game_currentTurnId, 
         g.winnerId AS game_winnerId, 
         p.id AS player_id, 
-        p.bet AS player_bet, 
+        p.balance AS player_bet, 
         p.gameId AS player_gameId, 
         p.userId AS player_userId, 
         p.name AS player_name, 

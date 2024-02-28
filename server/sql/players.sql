@@ -1,4 +1,4 @@
--- Active: 1707734547291@@127.0.0.1@3306@blackjack
+-- Active: 1707734547291@@127.0.0.1@3306
 DROP PROCEDURE IF EXISTS getAPlayer;
 CREATE PROCEDURE getAPlayer(IN i_playerId INT)
 COMMENT 'Retrieve player details by their ID, i_playerId: The ID of the player.'
@@ -83,18 +83,19 @@ COMMENT 'Delete a player and associated cards from a game,
 BEGIN
     DECLARE v_gameId INT;
     DECLARE v_userId INT;
+    DECLARE v_playerBalance INT;
     DECLARE v_playerExists INT DEFAULT 0;
     DECLARE v_gameExists INT DEFAULT 0;
     DECLARE v_playersCount INT;
 
     -- Check if the player exists
-    SELECT COUNT(*), userId INTO v_playerExists, v_userId FROM players WHERE id = p_playerId;
+    SELECT COUNT(*), userId, balance INTO v_playerExists, v_userId, v_playerBalance FROM players WHERE id = p_playerId;
     IF v_playerExists = 0 THEN 
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Player not found';
     END IF;
 
     -- Check if the game exists using gameCode and get its ID and playersCount
-    SELECT id, playersCount INTO v_gameId, v_playersCount FROM games WHERE code = p_gameCode LIMIT 1;
+    SELECT id, playersCount INTO v_gameId, v_playersCount FROM games WHERE code = p_gameCode;
     IF v_gameId IS NULL THEN 
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Game not found';
     END IF;
@@ -105,10 +106,10 @@ BEGIN
     -- Delete the player
     DELETE FROM players WHERE id = p_playerId AND gameId = v_gameId;
 
-    -- Subtract the user's balance by the game's bet
-    -- UPDATE users SET 
-    --     balance = balance - (SELECT bet FROM games WHERE id = v_gameId) 
-    -- WHERE id = v_userId;
+    -- Add the player's balance to the user's balance
+    UPDATE users SET 
+        balance = balance + v_playerBalance
+    WHERE id = v_userId;
     
 
     -- If the player is the last player in the game, delete the game

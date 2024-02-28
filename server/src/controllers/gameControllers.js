@@ -144,7 +144,7 @@ async function getAGame(req, res, next) {
   for (var i = 0; i < response.data.RESULTS[0].id.length; i++) {
     players.push({
       id: response.data.RESULTS[0].id[i],
-      bet: response.data.RESULTS[0].bet[i],
+      bet: response.data.RESULTS[0].balance[i],
       gameId: response.data.RESULTS[0].gameId[i],
       userId: response.data.RESULTS[0].userId[i],
       name: response.data.RESULTS[0].name[i],
@@ -474,7 +474,7 @@ async function changePlayerTurn(req, res, next) {
 
     if (player.score > 21 || player.score === 21) {
       var outcome = player.score > 21 ? "BUSTED" : "WINNER";
-      await axios.get(`http://sql.lavro.ru/call.php?db=285917&pname=updatePlayerOutcome&p1=4&p2=JOINED`, {
+      await axios.get(`http://sql.lavro.ru/call.php`, {
         params: {
           db: config.dbName,
           pname: "updatePlayerOutcome",

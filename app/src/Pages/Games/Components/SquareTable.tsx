@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
-import "./SquareTable.css";
 import axios, { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
-import Card from "./Card";
+import React, { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../../config";
+import Card from "./Card";
+import "./SquareTable.css";
 
 interface Card {
   id: number;
@@ -64,6 +64,7 @@ const SquareTable: React.FC<{ gameCode: string }> = ({ gameCode }) => {
 
   const [mainPlayer, setMainPlayer] = useState<Player>();
   const [players, setPlayers] = useState<Player[]>([]);
+  const [balance, setBalance] = useState(0);
 
   const [isReady, setIsReady] = useState<boolean>(false);
   const [canAddCards, setCanAddCards] = useState<boolean>(false);
@@ -154,12 +155,19 @@ const SquareTable: React.FC<{ gameCode: string }> = ({ gameCode }) => {
         renderCards();
 
         for (const player of response.data.game.players) {
+          if (player.userId === decode.userId) {
+            setMainPlayer(player);
+            setBalance(player.bet);
+          }
+
           if (player.outcome === "WINNER") {
             setCanAddCards(false);
             break;
           }
+          
           if (player.userId === decode.userId) {
             setMainPlayer(player);
+            setBalance(player.bet);
             setIsReady(player.ready === 1);
             var isCurrentTurn = player.id === response.data.game.currentTurnId;
             var isBusted = player.outcome === "BUSTED";
@@ -193,6 +201,15 @@ const SquareTable: React.FC<{ gameCode: string }> = ({ gameCode }) => {
 
     return () => clearInterval(intervalId);
   }, [gameCode, token, decode.userId]);
+
+  useEffect(() => {
+    if (mainPlayer?.bet === null || mainPlayer?.bet === undefined) return;
+    if (mainPlayer?.bet < 0) {
+      document.getElementById("player-bet")!.style.color = "red";
+    } else {
+      document.getElementById("player-bet")!.style.color = "green";
+    }
+  }, [balance])
 
   function changeTurn(check = false) {
     if (check) {
@@ -455,7 +472,9 @@ const SquareTable: React.FC<{ gameCode: string }> = ({ gameCode }) => {
 
   return (
     <>
-      <div className="square-table">{renderCards()}</div>
+      <div className="square-table">
+        {renderCards()}
+      </div>
 
       <span>&nbsp; Ready? </span>
       <label className="switch">
@@ -511,7 +530,7 @@ const SquareTable: React.FC<{ gameCode: string }> = ({ gameCode }) => {
           justifyContent: "center",
         }}
       >
-        Join Code: {game?.code}
+        Join Code: {game?.code} | Balance: <div id="player-bet">{balance ?? 0}</div>
       </span>
     </>
   );

@@ -4,7 +4,8 @@ const {
     getPlayerCards, 
     deletePlayer,
     updatePlayerState,
-    updatePlayerStay
+    updatePlayerStay,
+    updatePlayerScore
 } = require("../controllers/playerControllers");
 const verifyToken = require('../middlewares/tokenMiddleware');
 
