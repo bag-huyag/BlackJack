@@ -1,4 +1,4 @@
 module.exports = {
-    gameCodeLength: 8,
-    dbName: '285917',
+  gameCodeLength: 8,
+  dbName: '285917',
 }

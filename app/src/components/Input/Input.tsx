@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { EyeIcon, EyeSlashIcon } from "../Icons/EyeIcons";
 import "./Input.css";
-import { EyeIcon, EyeSlashIcon } from "components/Icons/EyeIcons";
 
 interface InputProps {
   name: string;

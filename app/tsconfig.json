@@ -1,18 +1,25 @@
 {
   "compilerOptions": {
-    "target": "ESNext",        // Set the target ECMAScript version (ES6/ESNext recommended)
-    "module": "CommonJS",        // Set the module system (ESNext recommended)
-    "strict": true,            // Enable strict type checking
-    "jsx": "react",            // Enable JSX support for React
-    "esModuleInterop": true,   // Allow compatibility with CommonJS modules
-    "skipLibCheck": true,      // Skip type checking of declaration files
-    "forceConsistentCasingInFileNames": true, // Enforce consistent file naming
-    "lib": ["DOM", "ESNext"],  // Specify available libraries (e.g., DOM for browser)
-    "outDir": "./build",       // Specify the output directory for compiled files
-    "rootDir": "./src",        // Specify the root directory of your source files
-    "baseUrl": "./src",           // Base URL for module resolution (for path aliases)
-    "paths": {}
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
   },
-  "include": ["src"],    // Specify files to include in the compilation
-  "exclude": ["node_modules"]  // Specify files to exclude from compilation
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -5,11 +5,15 @@ interface PrivateRouteProps {
   component: React.FC;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, ...rest }) => {
-  const isAuthenticated = localStorage.getItem('token') !== null;
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component }) => {
+  const isAuthenticated = localStorage.getItem('token') !== null && localStorage.getItem('id') !== null;
   return (
     <>
-      {isAuthenticated ? <Component /> : <Navigate to="/" replace />}
+      {isAuthenticated ? (
+      <>
+        <Component />
+      </>
+      ) : <Navigate to="/" replace />}
     </>
   );
 };

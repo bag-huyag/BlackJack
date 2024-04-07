@@ -1,4 +1,3 @@
-import React from "react";
 
 export const BackArrow = () => (
   <div
@@ -12,8 +11,8 @@ export const BackArrow = () => (
     }}
   >
     <svg
-      width="100%"
-      height="100%"
+      width="40px"
+      height="40px"
       viewBox="0 0 131 131"
       preserveAspectRatio="xMidYMid meet"
       fill="none"
@@ -25,12 +24,12 @@ export const BackArrow = () => (
         r="57.5"
         fill="white"
         stroke="#F4F7FC"
-        stroke-width="16"
+        strokeWidth="16"
       />
       <path
         d="M73.5 39L47 65.5L73.5 92"
         stroke="#0D4CD3"
-        stroke-width="8"
+        strokeWidth="8"
         stroke-linecap="round"
         stroke-linejoin="round"
       />

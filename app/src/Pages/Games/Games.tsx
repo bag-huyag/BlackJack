@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-import { BACKEND_URL } from "../../config";
 import "./Games.css";
 
 interface GameData {
@@ -12,23 +11,32 @@ interface GameData {
 }
 
 const Games = () => {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://sirshak.ddns.net";
   const token = localStorage.getItem("token");
+  const userID = parseInt(localStorage.getItem("id")!);
   const [games, setGames] = useState<GameData[]>([]);
+  const [seconds, setSeconds] = useState(30);
+  const [players, setPlayers] = useState(2);
 
   useEffect(() => {
-    axios
-      .get<GameData[]>(`${BACKEND_URL}/games`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "true",
-        },
-      })
-      .then((res) => {
-        setGames(res.data);
-      })
-      .catch((err) => {
-        console.log(err.response.data.message || err.message);
-      });
+    try {
+      axios
+        .get<GameData[]>(`${BACKEND_URL}/games`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true",
+          },
+        })
+        .then((res) => {
+          setGames(res.data);
+        })
+        .catch((err) => {
+          console.log(err.response.data.message || err.message);
+        });
+    } catch {
+      console.log("Error fetching games");
+      alert("Error fetching games. Please refresh.");
+    }
   }, [setGames, token]);
 
   function openCreateGamePopup() {
@@ -42,36 +50,14 @@ const Games = () => {
     document.getElementById("create-game-popup")!.style.display = "none";
   }
 
-  function incrementTime() {
-    let timeInput = document.getElementById("move-time") as HTMLInputElement;
-    let currentTime = parseInt(timeInput.value.replace(/\D/g, "")); // Remove non-digit characters for safety
-    currentTime = isNaN(currentTime) ? 10 : currentTime; // Default to 10 if NaN
-    currentTime = Math.min(currentTime + 1, 20); // increment by 1 second, maximum of 20 seconds
-    timeInput.value = currentTime + " секунд";
-  }
-
-  function decrementTime() {
-    let timeInput = document.getElementById("move-time") as HTMLInputElement;
-    let currentTime = parseInt(timeInput.value.replace(/\D/g, "")); // Remove non-digit characters for safety
-    currentTime = isNaN(currentTime) ? 10 : currentTime; // Default to 10 if NaN
-    currentTime = Math.max(currentTime - 1, 5); // decrement by 1 second, minimum of 5 seconds
-    timeInput.value = currentTime + " секунд";
-  }
-
   function createGame() {
-    const moveTime = parseInt(
-      (document.getElementById("move-time") as HTMLInputElement).value.replace(
-        /\D/g,
-        ""
-      )
-    );
     const betAmount = parseInt(
       (document.getElementById("bet-amount") as HTMLInputElement).value.replace(
         /\D/g,
         ""
       )
     );
-    if (isNaN(moveTime) || isNaN(betAmount)) {
+    if (isNaN(betAmount)) {
       alert("Время хода и сумма ставки должны быть числами");
       return;
     }
@@ -80,8 +66,10 @@ const Games = () => {
       .post(
         `${BACKEND_URL}/games`,
         {
-          turnTime: moveTime,
+          turnTime: seconds,
           bet: betAmount,
+          playersLimit: players,
+          userId: userID
         },
         {
           headers: {
@@ -118,14 +106,14 @@ const Games = () => {
                 r="57.5"
                 fill="white"
                 stroke="#F4F7FC"
-                stroke-width="16"
+                strokeWidth="16"
               />
               <path
                 d="M73.5 39L47 65.5L73.5 92"
                 stroke="#0D4CD3"
-                stroke-width="8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </div>
@@ -160,14 +148,34 @@ const Games = () => {
           <h2>Создать игру</h2>
           <div className="input-group">
             <label htmlFor="bet-amount">Ставка</label>
-            <input type="number" id="bet-amount" min="50" />
+            <input type="number" id="bet-amount" min={50} />
           </div>
           <div className="input-group">
-            <label>Время на ход</label>
+            <label>Время на ход (seconds)</label>
             <div className="increment-btns">
-              <button onClick={decrementTime}>-</button>
-              <input type="text" id="move-time" value="10 секунд" readOnly />
-              <button onClick={incrementTime}>+</button>
+              <button onClick={() => {
+                if (seconds === 10) return;
+                setSeconds(seconds - 1);
+              }}>-</button>
+              <input type="text" value={seconds} readOnly />
+              <button onClick={() => {
+                if (seconds === 60) return;
+                setSeconds(seconds + 1);
+              }}>+</button>
+            </div>
+          </div>
+          <div className="input-group">
+            <label>Players Limit</label>
+            <div className="increment-btns">
+              <button onClick={() => {
+                if (players === 2) return;
+                setPlayers(players - 1);
+              }}>-</button>
+              <input type="text" value={players} readOnly />
+              <button onClick={() => {
+                if (players === 4) return;
+                setPlayers(players + 1);
+              }}>+</button>
             </div>
           </div>
           <button className="create-btn" onClick={createGame}>

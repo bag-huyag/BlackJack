@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { jwtDecode } from 'jwt-decode';
+import React, { useEffect, useState } from 'react';
 import "./Dashboard.css";
-
-interface TokenData {
-  name: string;
-  email: string;
-  id: number;
-}
 
 const Dashboard: React.FC = () => {
   const [isSettingsOpen, setSettingsOpen] = useState(false);
@@ -37,11 +30,12 @@ const Dashboard: React.FC = () => {
 
   function logout(){
     localStorage.removeItem('token');
+    localStorage.removeItem('id');
+    localStorage.removeItem('username');
     window.location.href = '/';
   }
 
-  var token = localStorage.getItem('token');
-  var decoded = jwtDecode<TokenData>(token!);
+  var username = localStorage.getItem('username');
   
   async function joinGame(e: React.FormEvent) {
     e.preventDefault();
@@ -56,7 +50,7 @@ const Dashboard: React.FC = () => {
   return (
     <>
     <div className="menu-container">
-          <div className="user-name">Добро пожаловать {decoded?.name}</div>
+          <div className="user-name">Добро пожаловать {username}</div>
           
           <form onSubmit={joinGame}>
             <input type="text" name="join-code" id="join-code"  placeholder='Игровой код' required/>

@@ -20,7 +20,7 @@ html {
 	width: 100%;
 	max-width: 400px;
 	margin: auto;
-	position: relative;
+	display: flex;
 	top: 50px;
 	padding: 20px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

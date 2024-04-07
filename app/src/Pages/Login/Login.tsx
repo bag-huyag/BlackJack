@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
+import React, { useState } from "react";
 
+import Button from "../../components/Button/Button";
+import { BackArrow } from "../../components/Icons/BackArrow";
+import { Input, InputPassword } from "../../components/Input/Input";
+import { useLocalStorageString } from "../../hooks/useLocalStorage";
 import "./Login.css";
-import { useLocalStorageString } from "hooks/useLocalStorage";
-import Button from "components/Button/Button";
-import { BackArrow } from "components/Icons/BackArrow";
-import { Input, InputPassword } from "components/Input/Input";
-
-import { BACKEND_URL } from ".././../config";
 
 interface LoginForm {
   email: string;
@@ -16,7 +14,12 @@ interface LoginForm {
 
 const Login = () => {
   document.title = "Блэкджек - Вход в систему";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://sirshak.ddns.net";
+  
   const [token, setToken] = useLocalStorageString("token");
+  const [, setUserId] = useLocalStorageString("id");
+  const [, setUsername] = useLocalStorageString("username");
+
   if (token) {
     window.location.href = "/dashboard";
   }
@@ -43,7 +46,9 @@ const Login = () => {
       if (resp.status !== 200) {
         return alert(resp.data.message);
       }
-	  setToken(resp.data.token);
+	    setToken(resp.data.token);
+      setUserId(resp.data.id);
+      setUsername(resp.data.username);
       window.location.href = "/dashboard";
     } catch (error: any) {
       alert(error);

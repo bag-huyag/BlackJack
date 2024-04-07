@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import "./Card.css";
 
 type CardProps = {
@@ -9,17 +9,21 @@ type CardProps = {
 
 const Card: React.FC<CardProps> = ({ value, suit, hidden }) => {
   const getColor = () => {
-    if (suit === "♠" || suit === "♣") {
-      return "black";
-    } else {
-      return "red";
+    if (suit === '♠' || suit === '♣') {
+      return 'card-black';
     }
-  };
+    else {
+      return 'card-red';
+    }
+  }
 
   const getCard = () => {
     if (hidden) {
-      return <div className={`hiddenCard`} />;
-    } else {
+      return (
+        <div className={`hiddenCard`} />
+      );
+    }
+    else {
       return (
         <div className={`card`}>
           <div className={getColor()}>
@@ -29,9 +33,13 @@ const Card: React.FC<CardProps> = ({ value, suit, hidden }) => {
         </div>
       );
     }
-  };
+  }
 
-  return <>{getCard()}</>;
-};
+  return (
+    <>
+    {getCard()}
+    </>
+  );
+}
 
-export default Card;
+export default Card

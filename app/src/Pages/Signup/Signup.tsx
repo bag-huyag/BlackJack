@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
+import React, { useState } from "react";
 
+import Button from "../../components/Button";
+import { BackArrow } from "../../components/Icons/BackArrow";
+import { Input, InputPassword } from "../../components/Input";
+import { useLocalStorageString } from "../../hooks/useLocalStorage";
 import "./Signup.css";
-import { useLocalStorageString } from "hooks/useLocalStorage";
-import Button from "components/Button/Button";
-import { BackArrow } from "components/Icons/BackArrow";
-import { Input, InputPassword } from "components/Input/Input";
-
-import { BACKEND_URL } from "../../config";
 
 interface SignupForm {
-  name: string;
   email: string;
   password: string;
   confirm: string;
@@ -18,13 +15,17 @@ interface SignupForm {
 
 const Signup = () => {
   document.title = "Блэкджек - Регистрация";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://sirshak.ddns.net";
+
   const [token, setToken] = useLocalStorageString("token");
+  const [, setUserId] = useLocalStorageString("id");
+  const [, setUsername] = useLocalStorageString("username");
+
   if (token) {
     window.location.href = "/dashboard";
   }
 
   const [formData, setFormData] = useState<SignupForm>({
-    name: "",
     email: "",
     password: "",
     confirm: "",
@@ -52,6 +53,8 @@ const Signup = () => {
         return alert(resp.data.message);
       }
       setToken(resp.data.token);
+      setUserId(resp.data.id);
+      setUsername(resp.data.username);
       window.location.href = "/dashboard";
     } catch (error: any) {
       alert(error);
@@ -67,45 +70,36 @@ const Signup = () => {
       <h2>Регистрация</h2>
       <form method="post" onSubmit={handleSubmit}>
         <Input
-          key="name"
-          id="name"
+          key="email"
+          id="email"
           type="text"
-          name="name"
-          placeholder="Имя"
-          value={formData.name}
+          name="email"
+          placeholder="Почта"
+          value={formData.email}
           onChange={handleInputChange}
+		    />
+
+        <InputPassword
+          key="password"
+          id="password"
+          type="password"
+          name="password"
+          placeholder="Пароль"
+          value={formData.password}
+          onChange={handleInputChange}
+          show={false}
         />
-        <Input
-		  key="email"
-		  id="email"
-          type="text"
-		  name="email"
-		  placeholder="Почта"
-		  value={formData.email}
-		  onChange={handleInputChange}
-		/>
 
-		<InputPassword
-		  key="password"
-		  id="password"
-      	  type="password"
-		  name="password"
-		  placeholder="Пароль"
-		  value={formData.password}
-		  onChange={handleInputChange}
-		  show={false}
-		/>
-
-		<InputPassword
-		  key="confirm"
-		  id="confirm"
-      	  type="password"
-		  name="confirm"
-		  placeholder="confirm"	
-		  value={formData.confirm}
-		  onChange={handleInputChange}
-		  show={false}
-		/>
+        <InputPassword
+          key="confirm"
+          id="confirm"
+          type="password"
+          name="confirm"
+          placeholder="confirm"	
+          value={formData.confirm}
+          onChange={handleInputChange}
+          show={false}
+        />
 		
         <Button type="submit">Продолжить</Button>
       </form>

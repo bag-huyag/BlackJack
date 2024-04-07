@@ -1,8 +1,6 @@
-import React from "react";
-
+import './App.css';
+import Button from "./components/Button";
 import { useLocalStorageString } from "./hooks/useLocalStorage";
-import Button from "./components/Button/Button";
-import "./App.css";
 
 function App() {
   document.title = "Блэкджек";
@@ -28,4 +26,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

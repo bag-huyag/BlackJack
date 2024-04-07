@@ -1,78 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import axios, { AxiosError } from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
+import Table from "../../components/Table";
+import { BalanceProvider } from '../../context/Balance';
+import { IError, IGame, IPlayer } from "../../types";
 import "./Game.css";
-import { BACKEND_URL } from "../../config";
 
-import SquareTable from "../Games/Components/SquareTable";
-
-interface TokenData {
-  name: string;
-  email: string;
-  userId: number;
-}
-
-interface Card {
-  id: number;
-  name: string;
-  value: string;
-  suit: string;
-}
-
-interface Hands {
-  playerId: number;
-  gameCode: string;
-  cardId: number;
-  card: Card;
-}
-
-interface Player {
-  id: number;
-  bet: number;
-  gameId: number;
-  userId: number;
-  ready: number;
-  state: string;
-  outcome: string;
-  score: number;
-  hands: Hands[];
-}
-
-interface Game {
-  id: number;
-  code: string;
-  bet: number;
-  playersCount: number;
-  state: string;
-  turnTime: number;
-  winnerId: number;
-  currentTurnId: number;
-  players: Player[];
-}
-
-interface IGameResponse {
-  game: Game;
-}
-
-interface IGameError {
-  message?: string;
-  error?: string;
-}
-
-const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-const suits = ["spades", "hearts", "clubs", "diamonds"];
-function rand<T>(arr: T[]) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
 
 const Game = () => {
-  // for future use
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://sirshak.ddns.net";
   const token = localStorage.getItem("token");
-  const decode = jwtDecode<TokenData>(token!);
-  // const [game, setGame] = useState<any>(null);
-  // const [user, setUser] = useState<IUserPlayer>();
+  const userId = parseInt(localStorage.getItem("id")!);
+  // const decode = jwtDecode<IPlayer>(token!);
+  const [game, setGame] = useState<IGame>();
+  const [player, setPlayer] = useState<IPlayer>();
 
   const { code } = useParams();
   if (!code) {
@@ -82,7 +24,7 @@ const Game = () => {
   useEffect(() => {
     const getAndJoinGame = async () => {
       try {
-        const res = await axios.get<IGameResponse>(
+        const res = await axios.get<IGame>(
           `${BACKEND_URL}/games/${code}`,
           {
             headers: {
@@ -91,51 +33,43 @@ const Game = () => {
             },
           }
         );
+
+        setGame(res.data);
+
+        const exists = res.data.players.find(
+          (p) => p.userId === userId
+        );
+
+        if (exists) {
+          setPlayer(exists);
+          return;
+        }
+
         if (
-          res.data.game.players.length > 4 ||
-          res.data.game.playersCount > 4
+          (res.data.players.length + 1) > res.data.playersLimit
         ) {
           alert("Game is full!");
           window.location.href = "/dashboard";
         }
-
-        if (res.data.game.state === "RUNNING") {
-          alert(
-            "This is a running game, please join once it is finished or idle"
-          );
-          window.location.href = "/dashboard";
-        }
-
-        const player = res.data.game.players.find(
-          (p) => p.userId === decode.userId
-        );
-
-        // This is not a player in game, so join him.
-        if (!player) {
-          if (res.data.game.players.length > 4 || res.data.game.playersCount > 4) {
-            alert("Game is full!");
-            window.location.href = "/dashboard";
-          }
-          try {
-            await axios.post<Player>(
-              `${BACKEND_URL}/games/${code}`,
-              {
-                userId: decode.userId,
-                gameCode: code,
+        // create the player
+        try {
+          await axios.post<IPlayer>(
+            `${BACKEND_URL}/games/${code}`,
+            {
+              userId: userId,
+              gameCode: code,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'ngrok-skip-browser-warning': 'true'
               },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                  'ngrok-skip-browser-warning': 'true'
-                },
-              }
-            );
-          } catch (err) {
-            
-          }
-        }
-      } catch (error) {
-        const err = error as AxiosError<IGameError>;
+            }
+          );
+        } catch (err) {}
+      } 
+      catch (error) {
+        const err = error as AxiosError<IError>;
         console.log(err);
         alert(
           err.response?.data.message ||
@@ -146,11 +80,16 @@ const Game = () => {
       }
     };
     getAndJoinGame();
-  }, [code, decode]);
+  }, []);
 
   return (
     <div>
-      <SquareTable gameCode={code as string} />
+      {game !== undefined ? (
+        <BalanceProvider>
+          <Table initialGame={game!} initialPlayer={player} />
+        </BalanceProvider>
+      ) : ""}
+      {/* Define other tables and type of gameplay and import to use them */}
     </div>
   );
 };
